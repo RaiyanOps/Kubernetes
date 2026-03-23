@@ -1,0 +1,259 @@
+
+Install kubectl on Linux
+````````````````````````
+
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt update
+sudo apt install kubectl
+sudo snap install kubelogin
+sudo snap install kubectl --classic
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Download the latest version
+``````````````````````````````
+
+# curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# chmod +x kubectl
+
+# sudo mv kubectl /usr/local/bin/
+
+# kubectl version --client
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+# echo 'source <(kubectl completion bash)' >> ~/.bashrc
+# source ~/.bashrc
+
+
+
+# echo 'source <(kubectl completion zsh)' >> ~/.zshrc
+# source ~/.zshrc
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Install kubectl on macOS
+``````````````````````````
+
+brew install kubectl
+
+# curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
+
+# chmod +x kubectl
+
+# sudo mv kubectl /usr/local/bin/
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Install kubectl on Windows
+``````````````````````````
+
+# choco install kubernetes-cli
+
+# curl.exe -LO "https://dl.k8s.io/release/v1.29.0/bin/windows/amd64/kubectl.exe"
+
+Install kubectl : (https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/)
+
+# scoop install kubectl
+
+# kubectl version --client
+
+# cd ~
+
+# mkdir .kube
+
+# cd .kube
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+kubecconfg changes :
+````````````````````````
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+kubectl example commands:
+`````````````````````````
+
+kubectl create configmap timezone --from-file=/usr/share/zoneinfo/Asia/Dubai -n npss-edge
+
+kubectl create secret generic jasper-context --from-file context.xml -n npss-bl
+
+kubectl create secret tls gsscrt --cert=gss.crt --key=gss.key --namespace=npss-ws
+
+kubectl delete secret index-ssl-cert -n npss-edge
+
+kubectl create secret docker-registry gss-docker-registry --docker-server=https://index.docker.io/v1/ --docker-username=gsstvl --docker-password=dckr_pat_-6EF5PWP-I28hD77NZed4yzadHA --docker-email=praveensekar@gsstvl.com -n npss-bl
+
+kubectl label nodes aks-npss01-59747888-vmss000000 nodegroup=stateless
+
+kubectl label nodes aks-npss01-59747888-vmss000000 nodegroup-
+
+kubectl get deploy -n npss-edge
+
+kubectl rollout restart deployment npss-amqr -n npss-edge
+
+kubectl get nodes
+
+kubectl get pods -A
+
+kubectl -n npss-bl  get all
+
+kubectl config current-context
+
+kubectl apply -f externalamqdetails.yaml -n npss-edge
+
+kubectl apply -f https://github.com/kubesphere/ks-installer/releases/download/v3.3.2/kubesphere-installer.yaml
+
+kubectl delete pod --grace-period=0 --force <PODNAME> -n <NAMESPACE> [ force delete pod command in sinlge pods ]
+
+kubectl delete pod --grace-period=0 --force --all -n <NAMESPACE>  [ force delete pod command in all pods in the mentioned namespace ]
+
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+kubectl scale deploy --all -n <namespace> --replicas=<replica-count> 
+
+kubetl scale deploy --all -n npss-bl --replicas=0 
+
+kubectl get namespace
+	
+kubectl get namespace npss -o yaml
+	
+kubectl get namespace npss -o json > tmp.json
+	
+kubectl proxy
+    
+kubectl get namespace <YOUR_NAMESPACE> -o json > <YOUR_NAMESPACE>.json
+
+kubectl replace --raw "/api/v1/namespaces/<YOUR_NAMESPACE>/finalize" -f ./<YOUR_NAMESPACE>.json
+
+kubectl get events 
+
+kubectl describe daemonset kube-proxy -n kube-system
+
+kubectl describe node <nodeName> 
+
+kubectl cluster-info 	
+
+kubectl -n kubernetes-dashboard create token admin-user --duration=87600h
+
+kubectl logs <pod-name> -c <container-name>
+
+kubectl logs <pod-name> -n <namespace>
+
+kubectl exec -it <pod-name> -- /bin/bash
+
+kubectl exec -it <pod-name> -- sh 
+
+kubectl exec -it <pod-name> -n <namespace> -- bash
+
+kubectl cp -n <namespace> <pod-name>:<path> <local-path>              pod to local 
+
+kubectl cp <local-path> -n <namespace> <pod-name>:<path>               local to pods 
+
+kubectl debug <pod-name> --image=busybox --target=<container-name> 
+
+kubectl debug <pod-name> --image=busybox -n <namespace> 
+
+kubectl debug node/aks-npss02-10046016-vmss00000w  -it --image=mcr.microsoft.com/cbl-mariner/busybox:2.0
+
+kubectl debug node/aks-npss02-10046016-vmss00000w -it --image=mcr.microsoft.com/cbl-mariner/busybox:2.0 -- bash -c "date"
+
+kubectl top pods -A
+
+kubectl top pods -n <namespace>
+
+kubectl top nodes 
+
+kubectl get node -o wide
+
+kubectl rollout status deployment/<deployment-name>
+
+kubectl rollout undo deployment/<deployment-name>
+
+kubectl edit deployment <name>
+
+kubectl patch deployment <name> -p '{"spec": {"replicas": 3}}'
+
+kubectl get all --all-namespaces
+
+kubectl get events --sort-by='.metadata.creationTimestamp'
+
+kubectl api-resources
+
+kubectl explain <resource>
+
+kubectl get pods -o json | jq '.items[] | {name: .metadata.name, node: .spec.nodeName}'
+
+kubectl get pods -o wide
+
+kubectl get pods --field-selector status.phase=Running
+
+kubectl get pods --selector app=myapp
+
+kubectl label pod <name> env=prod
+
+kubectl annotate pod <name> description='This is a test'
+
+kubectl config get-contexts
+
+kubectl config use-context <context-name>
+
+kubectl auth can-i create pods --as <user>
+
+kubectl port-forward pod/<pod-name> 8080:80
+
+kubectl proxy
+
+kubectl apply -k <kustomization-dir>
+
+kubectl get --raw /metrics
+
+kubectl logs volumetest-0 -n npss-edge -f          ----------------> for live logs in the pods 
+
+kubectl get pods -n vph-be -o jsonpath="{.items[*].spec.containers[*].image}"  --------------------->  for ptint which image is used in the pods
+
+kubectl get pods -n npss-bl -o jsonpath="{.items[*].spec.containers[*].image}" | xargs -n1
+
+kubectl get pods --all-namespaces -o json | jq -r '.items[] | [.metadata.namespace, .spec.containers[].image] | @tsv'  --------- it print with namespace
+
+kubectl get pods -A -o wide | grep aks-wpsnode-35736261-vmss000001 | awk '{print $1, $2}' | while read namespace pod; do kubectl top pod $pod -n $namespace --no-headers; done | awk '{printf "%-40s %-5s %-6s\n", $1, $2, $3}'
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+label the kubernetes nodes enable in kubeapiserver.yaml in /etc/kubernetes/manifest/kubeapiserver.yaml
+
+refer the stack link "https://stackoverflow.com/questions/52487333/how-to-assign-a-namespace-to-certain-nodes"
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Sleep the container for crashloop check:
+
+kubectl patch sts keycloak -n npss-bl --type='json' \
+-p='[
+  {
+    "op": "replace",
+    "path": "/spec/template/spec/containers/0/command",
+    "value": ["/bin/sh"]
+  },
+  {
+    "op": "replace",
+    "path": "/spec/template/spec/containers/0/args",
+    "value": ["-c", "while true; do echo hello; sleep 10; done"]
+  }
+]'
+
+ 
+kubectl patch sts keycloak -n npss-bl --type='json' \
+-p='[
+  { "op": "remove", "path": "/spec/template/spec/containers/0/command" },
+  { "op": "remove", "path": "/spec/template/spec/containers/0/args" }
+]'
+
+-----------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: delete-pods-cronjob
+  namespace: npss-edge
+spec:
+  schedule: "0 23 * * *"   # 11 PM UTC is runs at dubai time 3 AM DST in every day
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: pod-cleanup-sa
+          containers:
+          - name: pod-cleanup
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl delete pods -l app=jasperreport -n npss-bl
+              kubectl delete pods -l app=nodejsfs -n npss-pco
+              kubectl delete pods -l app=nodejscs -n npss-pcu
+          restartPolicy: OnFailure
+      ttlSecondsAfterFinished: 3600

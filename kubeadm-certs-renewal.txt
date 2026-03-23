@@ -1,0 +1,94 @@
+ 
+* sudo kubeadm certs check-expiration
+
+
+This renews:
+````````````
+* apiserver
+
+* apiserver-kubelet-client
+
+* controller-manager
+
+* scheduler
+
+* etcd certs
+
+* front-proxy certs
+
+
+This does NOT touch worker nodes.
+
+Restart control-plane components (CRITICAL)
+
+Note : you have multinode kubernets cluster ( 3 control plane node )
+
+After renewal, restart kubelet on ALL 3 masters, one by one.
+
+On Master-1
+
+* sudo systemctl restart kubelet
+
+Wait ~30–60 seconds, then check:
+
+* kubectl get nodes
+
+Repeat on Master-2 and Master-3
+
+* sudo systemctl restart kubelet
+
+
+Do NOT restart all masters at once — keep quorum.
+
+Refresh kubeconfig files (COMMON HA ISSUE)
+
+On ALL 3 masters, run:
+
+* sudo kubeadm init phase kubeconfig all
+
+
+Then fix kubectl access (each master if used):
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+Test:
+
+* kubectl get nodes
+
+Verify etcd health (VERY IMPORTANT IN HA)
+
+From any master:
+
+kubectl -n kube-system exec -it etcd-$(hostname) -- \
+etcdctl endpoint health \
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+--cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
+--key=/etc/kubernetes/pki/etcd/healthcheck-client.key
+
+
+You should see:
+
+is healthy
+
+? 6?? Final health checks
+kubectl get nodes
+kubectl get pods -n kube-system
+kubectl get componentstatuses
+
+
+Workers do NOT need any cert renewal.
+
+? DO NOT DO THESE MISTAKES
+
+? Don’t renew certs on all masters
+? Don’t restart all masters together
+? Don’t forget kubeconfig refresh
+? Don’t touch workers|
+
+sudo kubeadm certs check-expiration
+
+
+----------------------------------------------------------------------------------------------------------------------------------- 
