@@ -89,7 +89,7 @@ kubectl create secret tls gsscrt --cert=gss.crt --key=gss.key --namespace=npss-w
 
 kubectl delete secret index-ssl-cert -n npss-edge
 
-kubectl create secret docker-registry gss-docker-registry --docker-server=https://index.docker.io/v1/ --docker-username=gsstvl --docker-password=dckr_pat_-6EF5PWP-I28hD77NZed4yzadHA --docker-email=praveensekar@gsstvl.com -n npss-bl
+kubectl create secret docker-registry gss-docker-registry --docker-server=https://index.docker.io/v1/ --docker-username=<username> --docker-password=<pat-or-passwd> --docker-email=test@gsstvl.com -n <namespace>
 
 kubectl label nodes aks-npss01-59747888-vmss000000 nodegroup=stateless
 
