@@ -1,0 +1,48 @@
+To make YAML manifest editing easier in Vim, update the .vimrc configuration file with additional settings that display line numbers and highlight the current cursor line and column.
+
+Check the existing .vimrc file:
+
+root@controlplane:~$ ls -la .vimrc
+-rw-r--r-- 1 root root 109 May 16 19:59 .vimrc
+
+root@controlplane:~$ vi .vimrc
+
+Current configuration:
+
+# Default configuration
+set tabstop=2
+set shiftwidth=2
+set autoindent
+set smartindent
+set bg=dark
+set nowrap
+set paste
+set expandtab
+
+Add the following line to enable line numbering and cursor line/column highlighting:
+
+set cuc cul ai nu sts=2 ts=2 et sw=2
+
+Updated .vimrc file:
+
+1  set tabstop=2
+2  set shiftwidth=2
+3  set autoindent
+4  set smartindent
+5  set bg=dark
+6  set nowrap
+7  set paste
+8  set expandtab
+
+# Added configuration
+9  set cuc cul ai nu sts=2 ts=2 et sw=2
+
+After saving the changes and reopening Vim, the editor will display line numbers, highlight the current row and column, and make cursor positioning easier. These visual aids help simplify YAML manifest editing and reduce indentation-related errors.
+
+
+Note:
+
+nu = Show line numbers
+cul = Highlight the current line
+cuc = Highlight the current column
+ts=2, sw=2, sts=2, et = Maintain 2-space indentation using spaces instead of tabs, which is recommended for YAML files.
